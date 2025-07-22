@@ -58,3 +58,27 @@ export const createProduct = async (req, res) => {
     });
   }
 };
+
+
+export const findProduct = async (req, res) => {
+  try {
+
+    const productData = await ProductModel.find();
+
+
+    
+    res.status(201).json({
+      success: true,
+      message: "find successfully",
+      data: productData,
+    });
+  } catch (error) {
+    console.log(error);
+    
+    res.status(400).json({
+      success: false,
+      message: "category data find failed",
+      error: error.message,
+    });
+  }
+};
