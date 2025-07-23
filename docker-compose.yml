@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - auth_service
+      - product_service
+      - order_service
+      - frontend
+
+  auth_service:
+    build: ./auth_service
+    ports:
+      - "3000:3000"
+
+  product_service:
+    build: ./product_service
+    ports:
+      - "3001:3001"
+
+  order_service:
+    build: ./order_service
+    ports:
+      - "3002:3002"
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3005:80"
