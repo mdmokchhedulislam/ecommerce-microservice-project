@@ -264,6 +264,23 @@ const updateUserRole = asyncHandler(async (req, res) => {
 });
 
 
+// controllers/authController.js
+import jwt from "jsonwebtoken";
+
+export const verifyTokenFromCookie = (req, res) => {
+  const token = req.cookies.token;
+  if (!token) return res.status(401).json({ message: "No token found" });
+
+  try {
+    const decoded = jwt.verify(token, "mokchhedulislam");
+    res.status(200).json({ valid: true, user: decoded });
+  } catch (err) {
+    res.status(401).json({ valid: false, message: "Invalid or expired token" });
+  }
+};
+
+
+
 
 
 
