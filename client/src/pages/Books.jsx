@@ -30,7 +30,7 @@ function Books() {
       setLoading(true); 
       try {
         const res = await axios.get(
-          "http://localhost:3001/api/product/find-product",
+          "http://3.84.134.228/api/product/find-product",
           { withCredentials: true }
         );
 
