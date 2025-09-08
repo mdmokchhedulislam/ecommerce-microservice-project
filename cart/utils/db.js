@@ -6,7 +6,7 @@ mongoose.connect().then(()=>console.log("db connected successfully")).catch((err
 const dbConnected =async ()=>{
 
     try {
-        await mongoose.connect("mongodb+srv://mokchheduls46:mokchhedul@cluster0.cxqeo.mongodb.net/microservice?retryWrites=true&w=majority&appName=Cluster0", {
+        await mongoose.connect("mongodb+srv://mokchheduls46:mokchhedul@cluster0.cxqeo.mongodb.net/cartservice?retryWrites=true&w=majority&appName=Cluster0", {
             useNewUrlParser: true,
             useUnifiedTopology: true
           });
