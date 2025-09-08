@@ -3,7 +3,7 @@ const router = express.Router();
 
 import { createProduct, findProduct, ListByBrandService, ListByCategoryService } from "../controller/ProductController.js";
 import { upload } from "../utils/multer.js";
-import  isVerify  from "../middleware/verify.js";
+
 
 router.post("/create", upload.single("image"), createProduct);
 router.get("/find-product",findProduct);

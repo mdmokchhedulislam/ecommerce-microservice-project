@@ -1,8 +1,9 @@
 import { Router } from "express";
 
 import { upload } from "../utils/multer.js";
-import { isAuthenticate } from "../middleware/authMiddleware.js";
 import { registerUser, loginUser, logOut, updateUserRole, verifyTokenFromCookie } from "../controller/user-controller.js";
+import { isAuthenticate } from "../middleware/authMiddleware.js";
+
 
 
 

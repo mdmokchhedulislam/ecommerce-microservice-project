@@ -20,6 +20,6 @@ app.use('/api/category', categoryRouter)
 app.use(cookieParser());
 
 app.listen(3001, ()=>{
-    console.log("server is running port 3000");
+    console.log("server is running port 3001");
     
 })
