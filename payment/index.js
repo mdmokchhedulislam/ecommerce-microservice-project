@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from "cors"
-import cartRouter from './routes/cartRoute.js'
+import invoiceRouter from "./routes/invoiceRouter.js"
+
 import { dbConnected } from './utils/db.js'
 import cookieParser from 'cookie-parser';
 
@@ -15,7 +16,7 @@ app.use(cors({
 app.use(express.json()); 
 app.use(cookieParser());
 
-app.use('/api/invoice', cartRouter)
+app.use('/api/invoice', invoiceRouter)
 
 app.listen(3005, ()=>{
     console.log("server is running port 3005");
