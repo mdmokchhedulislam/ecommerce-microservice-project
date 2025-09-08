@@ -85,3 +85,30 @@ export const getCartItems = async (req, res) => {
   }
 };
 
+
+
+
+
+
+export const updateCartItem = async (req, res) => {
+  try {
+    const user_id = req.user._id;
+    const { cartID } = req.params;
+    const { qty, color, size } = req.body;
+
+    const updated = await CartModel.updateOne(
+      { _id: cartID, userID: user_id },
+      { $set: { qty, color, size } }
+    );
+
+    res.status(200).json({ success: true, message: "Cart item updated", updated });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ success: false, message: "Failed to update cart", error: error.message });
+  }
+};
+
+
+
+
+
