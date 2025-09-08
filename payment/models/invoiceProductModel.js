@@ -11,3 +11,4 @@ const InvoiceProductSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 const InvoiceProduct  = mongoose.model("InvoiceProduct", InvoiceProductSchema);
+export default InvoiceProduct

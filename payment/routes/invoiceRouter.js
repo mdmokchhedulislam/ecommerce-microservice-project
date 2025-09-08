@@ -1,14 +1,10 @@
 import express from "express"
+import { auth } from "../middleware/verify.js";
+import CreateInvoice from "../controller/invoiceController.js";
 const router = express.Router();
 
 
-router.post("/create-invoice", (req,res)=>{
-    res.json({
-        message:"invoice created"
-    })
-    
-
-});
+router.post("/create-invoice", auth, CreateInvoice);
 
 // router.get("/payment-success/:trxID");
 

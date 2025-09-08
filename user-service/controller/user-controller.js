@@ -107,6 +107,32 @@ const loginUser = asyncHandler(async (req, res) => {
     );
 });
 
+
+
+// const findProfile = (req,res)=>{
+//   res.status(200).json({
+//     user:req.user
+//   })
+
+
+
+const findProfile = async (req, res) => {
+  try {
+    const user_id = req.user._id; 
+    const user = await User.findById(user_id).select("-password"); 
+    if (!user) {
+      return res.status(404).json({ status: "error", message: "User not found" });
+    }
+
+    res.status(200).json({ status: "success", data: user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: "error", message: "Failed to fetch user" });
+  }
+};
+
+
+
 const logOut = asyncHandler(async (req, res) => {
   res.cookie("token", "").status(200).json({
     message: "user logout successfully",
@@ -294,4 +320,5 @@ export {
   getCurrentUser,
   updateAccountDetails,
   updateUserRole,
+  findProfile
 };
