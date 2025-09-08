@@ -109,6 +109,18 @@ export const updateCartItem = async (req, res) => {
 };
 
 
+export const removeCartItem = async (req, res) => {
+  try {
+    const user_id = req.user._id;
+    const { cartID } = req.params;
 
+    await CartModel.deleteOne({ _id: cartID, userID: user_id });
+
+    res.status(200).json({ success: true, message: "Cart item removed" });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ success: false, message: "Failed to remove cart item", error: error.message });
+  }
+};
 
 
