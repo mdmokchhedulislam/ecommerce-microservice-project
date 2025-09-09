@@ -4,8 +4,8 @@ metadata:
   name: {{ include "user-service.fullname" . }}
 spec:
   type: {{ .Values.service.type }}
+  selector:
+    app: {{ include "user-service.name" . }}
   ports:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.port }}
-  selector:
-    app: {{ include "user-service.name" . }}

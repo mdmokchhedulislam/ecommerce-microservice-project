@@ -19,4 +19,4 @@ spec:
             - containerPort: {{ .Values.service.port }}
           env:
             - name: MONGO_URI
-              value: "mongodb+srv://mokchheduls46:mokchhedul@cluster0.cxqeo.mongodb.net/userservice?retryWrites=true&w=majority"
+              value: "mongodb://{{ .Values.mongo.serviceName }}:{{ .Values.mongo.port }}/userdb"

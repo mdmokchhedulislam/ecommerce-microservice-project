@@ -2,17 +2,14 @@ replicaCount: 1
 
 image:
   repository: mokchhedul/userservice
-  tag: "latest"
+  tag: latest
   pullPolicy: IfNotPresent
 
 service:
   type: ClusterIP
   port: 3000
 
-ingress:
-  enabled: true 
-  host: user.local 
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/rewrite-target: /
-  tls: [] 
+mongo:
+  image: mongo:6
+  serviceName: mongo
+  port: 27017
