@@ -1,4 +1,4 @@
-apiVersion: apps/v1
+{% comment %} apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mongo
@@ -35,4 +35,4 @@ spec:
     - port: {{ .Values.mongo.port }}
       targetPort: {{ .Values.mongo.port }}
   selector:
-    app: mongo
+    app: mongo {% endcomment %}

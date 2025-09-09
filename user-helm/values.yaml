@@ -1,11 +1,11 @@
 replicaCount: 1
 
 backend:
-  image: mokchhedul/userservice
+  image: mokchhedul/crud-frontend
   tag: latest
-  port: 3000
+  port: 80
 
-mongo:
-  image: mongo:6.0
-  port: 27017
-  dbName: userdb
+# mongo:
+#   image: mongo:6.0
+#   port: 27017
+#   dbName: userdb
