@@ -5,14 +5,12 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
-  service:
-  type: ClusterIP
+service:
+  type: NodePort
   port: 3000
-
-# mongo-service:
-#   type: ClusterIP
 
 mongo:
   image: mongo:6
   serviceName: mongo
   port: 27017
+  serviceType: ClusterIP
