@@ -14,7 +14,6 @@ import { dbConnected } from './utils/db.js';
 const app = express();
 dotenv.config()
 const PORT = process.env.PORT
-console.log("port is ", PORT);
 
 dbConnected();
 
