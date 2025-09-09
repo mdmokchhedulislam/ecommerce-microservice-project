@@ -5,9 +5,12 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
-service:
+  service:
   type: ClusterIP
   port: 3000
+
+# mongo-service:
+#   type: ClusterIP
 
 mongo:
   image: mongo:6

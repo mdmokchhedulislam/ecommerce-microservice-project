@@ -1,4 +1,4 @@
-{{- if .Values.ingress.enabled }}
+{% comment %} {{- if .Values.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -21,4 +21,4 @@ spec:
   tls:
   {{- toYaml .Values.ingress.tls | indent 4 }}
   {{- end }}
-{{- end }}
+{{- end }} {% endcomment %}
