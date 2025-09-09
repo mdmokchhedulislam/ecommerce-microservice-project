@@ -1,7 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-service-user-service
+  name: user-service
+  labels:
+    app: user-service
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -12,36 +14,28 @@ spec:
       labels:
         app: user-service
     spec:
-      initContainers:
-        - name: wait-for-mongo
-          image: busybox:1.35
-          command:
-            - sh
-            - -c
-            - |
-              until nc -z {{ .Values.mongo.serviceName }} {{ .Values.mongo.port }}; do
-                echo "Waiting for Mongo..."
-                sleep 2
-              done
       containers:
         - name: user-service
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.backend.image }}:{{ .Values.backend.tag }}"
           ports:
-            - containerPort: {{ .Values.service.port }}
+            - containerPort: {{ .Values.backend.port }}
           env:
+            - name: PORT
+              value: "{{ .Values.backend.port }}"
             - name: MONGO_URI
-              value: mongodb://{{ .Values.mongo.serviceName }}:{{ .Values.mongo.port }}/userdb
-
+              value: "mongodb://mongo:{{ .Values.mongo.port }}/{{ .Values.mongo.dbName }}"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: user-service-user-service
+  name: user-service
+  labels:
+    app: user-service
 spec:
-  type: {{ .Values.service.type }}
+  type: NodePort
+  ports:
+    - port: {{ .Values.backend.port }}
+      targetPort: {{ .Values.backend.port }}
+      nodePort: 30007
   selector:
     app: user-service
-  ports:
-    - port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.port }}

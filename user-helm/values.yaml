@@ -1,16 +1,11 @@
 replicaCount: 1
 
-image:
-  repository: mokchhedul/userservice
+backend:
+  image: mokchhedul/userservice
   tag: latest
-  pullPolicy: IfNotPresent
-
-service:
-  type: NodePort
   port: 3000
 
 mongo:
-  image: mongo:6
-  serviceName: mongo
+  image: mongo:6.0
   port: 27017
-  serviceType: ClusterIP
+  dbName: userdb

@@ -1,40 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.mongo.serviceName }}
+  name: mongo
+  labels:
+    app: mongo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .Values.mongo.serviceName }}
+      app: mongo
   template:
     metadata:
       labels:
-        app: {{ .Values.mongo.serviceName }}
+        app: mongo
     spec:
       containers:
         - name: mongo
           image: {{ .Values.mongo.image }}
           ports:
             - containerPort: {{ .Values.mongo.port }}
-          readinessProbe:
-            exec:
-              command:
-                - mongo
-                - --eval
-                - "db.adminCommand('ping')"
-            initialDelaySeconds: 10
-            periodSeconds: 5
-
+          env:
+            - name: MONGO_INITDB_DATABASE
+              value: {{ .Values.mongo.dbName }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.mongo.serviceName }}
+  name: mongo
+  labels:
+    app: mongo
 spec:
-  type: {{ .Values.mongo.serviceType | default "ClusterIP" }}
-  selector:
-    app: {{ .Values.mongo.serviceName }}
+  type: ClusterIP
   ports:
     - port: {{ .Values.mongo.port }}
       targetPort: {{ .Values.mongo.port }}
+  selector:
+    app: mongo
