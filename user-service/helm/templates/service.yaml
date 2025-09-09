@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ include "user-service.fullname" . }}
 spec:
-  type: {{ .Values.service.type }}
+  type: NodePort
   selector:
     app: {{ include "user-service.name" . }}
   ports:
