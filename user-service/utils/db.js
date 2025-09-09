@@ -1,23 +1,14 @@
 import mongoose from "mongoose";
 
-mongoose.connect().then(()=>console.log("db connected successfully")).catch((err)=>console.log(err)
-)
+const dbConnected = async () => {
+  try {
+    const uri = process.env.MONGO_URI || "mongodb+srv://mokchheduls46:mokchhedul@cluster0.cxqeo.mongodb.net/userservice";
+    await mongoose.connect(uri);
+    console.log("MongoDB connected successfully.");
+  } catch (error) {
+    console.error("MongoDB connection error:", error);
+    process.exit(1); // Pod crash avoid করতে পারে, optional
+  }
+};
 
-const dbConnected =async ()=>{
-
-    try {
-        await mongoose.connect("mongodb+srv://mokchheduls46:mokchhedul@cluster0.cxqeo.mongodb.net/userservice?retryWrites=true&w=majority&appName=Cluster0", {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-          });
-          console.log("MongoDB connected successfully.");
-        
-    } catch (error) {
-        console.log(error);
-        
-        
-    }
-
-}
-
-export  {dbConnected}
+export { dbConnected };
