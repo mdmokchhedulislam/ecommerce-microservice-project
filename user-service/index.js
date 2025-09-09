@@ -12,11 +12,13 @@ import { dbConnected } from './utils/db.js';
 
 
 const app = express();
+dotenv.config()
+const PORT = process.env.PORT
+console.log("port is ", PORT);
+
 dbConnected();
 
-dotenv.config()
 
-const PORT = 3000
 
 app.use(cors({
   origin: 'http://localhost:5173', // React app port (Vite হলে 5173)
