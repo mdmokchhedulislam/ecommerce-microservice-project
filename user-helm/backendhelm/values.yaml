@@ -1,0 +1,15 @@
+replicaCount: 1
+
+image:
+  repository: mokchhedul/userservice
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  name: userservice
+  type: NodePort
+  port: 3000
+
+env:
+  port: "3000"
+  mongoUri: "mongodb://mongo:27017/userservice"

@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-userservice
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-userservice
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-userservice
+    spec:
+      containers:
+        - name: userservice
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          env:
+            - name: PORT
+              value: {{ .Values.env.port | quote }}
+            - name: MONGO_URI
+              value: {{ .Values.env.mongoUri | quote }}
