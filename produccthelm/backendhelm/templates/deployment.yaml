@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
+  name: ecom-product
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: backend
+      app: ecom-product
   template:
     metadata:
       labels:
-        app: backend
+        app: ecom-product
     spec:
       containers:
-        - name: backend
+        - name: ecom-product
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
@@ -22,10 +22,10 @@ spec:
             - name: MONGO_URI
               valueFrom:
                 configMapKeyRef:
-                  name: backend-config
+                  name: ecom-config
                   key: MONGO_URI
             - name: PORT
               valueFrom:
                 configMapKeyRef:
-                  name: backend-config
+                  name: ecom-config
                   key: PORT
