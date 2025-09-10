@@ -1,25 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-userservice
+  name: backend
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-userservice
+      app: backend
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}-userservice
+        app: backend
     spec:
       containers:
-        - name: userservice
+        - name: backend
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.port }}
           env:
-            - name: PORT
-              value: {{ .Values.env.port | quote }}
             - name: MONGO_URI
-              value: {{ .Values.env.mongoUri | quote }}
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: MONGO_URI
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: PORT

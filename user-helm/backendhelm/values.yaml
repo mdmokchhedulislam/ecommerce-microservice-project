@@ -1,4 +1,4 @@
-replicaCount: 1
+replicaCount: 2
 
 image:
   repository: mokchhedul/userservice
@@ -6,10 +6,10 @@ image:
   pullPolicy: IfNotPresent
 
 service:
-  name: userservice
-  type: NodePort
+  name: backend-service
+  type: LoadBalancer
   port: 3000
 
-env:
+config:
+  mongoUri: "mongodb://mongo:27017/data"
   port: "3000"
-  mongoUri: "mongodb://mongo:27017/userservice"
