@@ -1,0 +1,14 @@
+replicaCount: 2
+
+image:
+  repository: mokchhedul/ecomproduct
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  name: product-service
+  type: LoadBalancer
+
+config:
+  mongoUri: "mongodb://mongo:27017/product"
+  port: "3001"
