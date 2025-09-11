@@ -9,6 +9,7 @@ service:
   name: backend-service
   type: LoadBalancer
   port: 3000
+  selector: user
 
 config:
   mongoUri: "mongodb://mongo:27017/data"
