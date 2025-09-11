@@ -6,10 +6,10 @@ image:
   pullPolicy: IfNotPresent
 
 service:
-  name: backend-service
-  type: LoadBalancer
+  name: user-service
+  type: ClusterIP
   port: 3000
-  selector: user
+  selector: ecom-user
 
 config:
   mongoUri: "mongodb://mongo:27017/data"
