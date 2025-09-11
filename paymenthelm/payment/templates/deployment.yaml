@@ -6,7 +6,7 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: ecom-product
+      app: {{.Values.service.name}}
   template:
     metadata:
       labels:
