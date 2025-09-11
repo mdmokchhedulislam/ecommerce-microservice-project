@@ -6,7 +6,7 @@ image:
   pullPolicy: IfNotPresent
 
 service:
-  name: peyment-service
+  name: ecompay
   type: LoadBalancer
   port: "3003"
 
