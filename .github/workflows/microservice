@@ -4,8 +4,8 @@ on:
     paths:
       - 'user-service/**'
       - 'product-service/**'
-      - 'order-service/**'
-      - 'payment-service/**'
+      - 'cart/**'
+      - 'payment/**'
 
 jobs:
   filter:
@@ -28,9 +28,9 @@ jobs:
             product:
               - 'product-service/**'
             order:
-              - 'order-service/**'
+              - 'cart/**'
             payment:
-              - 'payment-service/**'
+              - 'payment/**'
 
   deploy:
     needs: filter
@@ -68,15 +68,15 @@ jobs:
         if: needs.filter.outputs.order_changed == 'true'
         run: |
           echo "Deploying Order Service..."
-          cd order-service
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/order-service:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/order-service:latest
+          cd cart
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/cart:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/cart:latest
 
       # Payment Service Deploy
       - name: Deploy Payment Service
         if: needs.filter.outputs.payment_changed == 'true'
         run: |
           echo "Deploying Payment Service..."
-          cd payment-service
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/payment-service:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/payment-service:latest
+          cd payment
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/payment:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/payment:latest
