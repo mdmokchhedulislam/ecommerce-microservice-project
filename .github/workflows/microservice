@@ -51,8 +51,8 @@ jobs:
         run: |
           echo "Deploying User Service..."
           cd user-service
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/user-service:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/user-service:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/userservice:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/userservice:latest
 
       # Product Service Deploy
       - name: Deploy Product Service
@@ -60,8 +60,8 @@ jobs:
         run: |
           echo "Deploying Product Service..."
           cd product-service
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/product-service:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/product-service:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/ecomproduct:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/ecomproduct:latest
 
       # Order Service Deploy
       - name: Deploy Order Service
@@ -69,8 +69,8 @@ jobs:
         run: |
           echo "Deploying Order Service..."
           cd cart
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/cart:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/cart:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/ecomcart:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/ecomcart:latest
 
       # Payment Service Deploy
       - name: Deploy Payment Service
@@ -78,5 +78,5 @@ jobs:
         run: |
           echo "Deploying Payment Service..."
           cd payment
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/payment:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/payment:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/ecompayment:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/ecompayment:latest
