@@ -34,11 +34,6 @@ db:
 
   storage:
     size: 1Gi
-    path: /mnt/data/mongo
+    path: /mnt/data/user
     accessMode: ReadWriteOnce
-    mntpath: /data/db
-    
-  
-    
-    
-
+    mntpath: /data/user

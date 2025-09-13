@@ -31,6 +31,6 @@ db:
 
   storage:
     size: 1Gi
-    path: /mnt/data/mongo
+    path: /mnt/data/cart
     accessMode: ReadWriteOnce
-    mntpath: /data/db
+    mntpath: /data/cart
