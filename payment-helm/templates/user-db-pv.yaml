@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: product-mongo-pv
+  name: payment-mongo-pv
 spec:
   capacity:
     storage: {{ .Values.db.storage.size }}

@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: product-mongo-pvc
-  namespace: {{ .Values.user.namespace }}
+  name: payment-mongo-pvc
+  namespace: {{ .Values.payment.namespace }}
 spec:
   accessModes:
     - {{ .Values.db.storage.accessMode }}

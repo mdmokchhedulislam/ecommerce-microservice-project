@@ -1,42 +1,36 @@
-product:
+payment:
   replicaCount: 2
-  namespace: product
-  selector: product-service
+  namespace: payment
+  selector: payment-service
 
   image:
-    repository: mokchhedul/userservice
+    repository: mokchhedul/ecompayment
     tag: latest
     pullPolicy: IfNotPresent
-    
 
   service:
-    name: product-service
+    name: payment-service
     type: ClusterIP
-    port: 3001
+    port: 3005
 
 db:
   replicaCount: 1
-  selector: product-mongo
+  selector: payment-mongo
 
   image:
     repository: mongo
     tag: latest
     pullPolicy: IfNotPresent
-    containarname: product-mongo
+    containarname: payment-mongo
 
   service:
-    name: product-mongo-service
+    name: payment-mongo-service
     type: ClusterIP
     port: 27017
-    dbname: product
+    dbname: payment
 
   storage:
     size: 1Gi
     path: /mnt/data/mongo
     accessMode: ReadWriteOnce
     mntpath: /data/db
-    
-  
-    
-    
-

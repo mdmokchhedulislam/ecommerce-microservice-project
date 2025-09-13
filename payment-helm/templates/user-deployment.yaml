@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.product.service.name }}
-  namespace: {{ .Values.product.namespace }}
+  name: {{ .Values.payment.service.name }}
+  namespace: {{ .Values.payment.namespace }}
 spec:
-  replicas: {{ .Values.product.replicaCount }}
+  replicas: {{ .Values.payment.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Values.product.selector }}
+      app: {{ .Values.payment.selector }}
   template:
     metadata:
       labels:
-        app: {{ .Values.product.selector }}
+        app: {{ .Values.payment.selector }}
     spec:
       initContainers:
         - name: wait-for-mongo
@@ -28,11 +28,11 @@ spec:
 
 
       containers:
-        - name: {{ .Values.product.service.name }}
-          image: "{{ .Values.product.image.repository }}:{{ .Values.product.image.tag }}"
-          imagePullPolicy: {{ .Values.product.image.pullPolicy }}
+        - name: {{ .Values.payment.service.name }}
+          image: "{{ .Values.payment.image.repository }}:{{ .Values.payment.image.tag }}"
+          imagePullPolicy: {{ .Values.payment.image.pullPolicy }}
           ports:
-            - containerPort: {{ .Values.product.service.port }}
+            - containerPort: {{ .Values.payment.service.port }}
           env:
             - name: MONGO_URI
               valueFrom:
@@ -51,13 +51,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.user.service.name }}
-  namespace: {{ .Values.user.namespace }}
+  name: {{ .Values.payment.service.name }}
+  namespace: {{ .Values.payment.namespace }}
 spec:
   selector:
-    app: {{ .Values.user.selector }}
+    app: {{ .Values.payment.selector }}
   ports:
     - protocol: TCP
-      port: {{ .Values.user.service.port }}
-      targetPort: {{ .Values.user.service.port }}
-  type: {{ .Values.user.service.type }}
+      port: {{ .Values.payment.service.port }}
+      targetPort: {{ .Values.payment.service.port }}
+  type: {{ .Values.payment.service.type }}
