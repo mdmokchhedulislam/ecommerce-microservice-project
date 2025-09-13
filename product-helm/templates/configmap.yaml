@@ -4,5 +4,5 @@ metadata:
   name: backend-config
   namespace: {{ .Values.product.namespace }}
 data:
-  MONGO_URI: mongodb://{{ .Values.db.service.name }}:{{ .Values.db.service.port }}/{{ .Values.db.service.dbname }} 
+  MONGO_URI: "mongodb://{{ .Values.db.service.name }}:{{ .Values.db.service.port }}/{{ .Values.db.service.dbname }}"
   PORT: {{ .Values.product.service.port }}

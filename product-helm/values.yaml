@@ -11,7 +11,7 @@ product:
   service:
     name: product-service
     type: ClusterIP
-    port: 3001
+    port: "3001"
 
 db:
   replicaCount: 1
