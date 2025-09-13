@@ -1,6 +1,6 @@
 product:
   replicaCount: 2
-  namespace: product
+  namespace: microservice
   selector: product-service
 
   image:

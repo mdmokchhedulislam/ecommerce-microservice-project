@@ -1,5 +1,5 @@
 apiVersion: v2
-name: backend-helm
+name: user-helm
 description: A Helm chart for Backend Service
 type: application
 version: 0.1.0

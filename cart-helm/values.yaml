@@ -1,6 +1,6 @@
 cart:
   replicaCount: 2
-  namespace: cart
+  namespace: microservice
   selector: cart-service
 
   image:
