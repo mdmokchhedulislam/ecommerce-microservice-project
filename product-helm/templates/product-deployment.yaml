@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.product.service.name }}
-  {% comment %} namespace: {{ .Values.product.namespace }} {% endcomment %}
 spec:
   replicas: {{ .Values.product.replicaCount }}
   selector:
