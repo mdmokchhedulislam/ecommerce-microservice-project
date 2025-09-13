@@ -1,0 +1,44 @@
+user:
+  replicaCount: 2
+  namespace: user
+  selector: user-mongo
+
+  image:
+    repository: mokchhedul/userservice
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  service:
+    name: user-service
+    type: ClusterIP
+    port: 3000
+
+config:
+  mongoUri: "mongodb://mongo:27017/data"
+  port: "3000"
+
+db:
+  replicaCount: 1
+  selector: user-mongo
+
+  image:
+    repository: mongo
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  service:
+    name: user-mongo-service
+    type: ClusterIP
+    port: 27017
+    host: mongo
+
+  storage:
+    size: 1Gi
+    path: /mnt/data/mongo
+    accessMode: ReadWriteOnce
+    mntpath: /data/db
+    
+  
+    
+    
+
