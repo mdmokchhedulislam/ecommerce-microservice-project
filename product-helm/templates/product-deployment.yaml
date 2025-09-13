@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.product.service.name }}
-  namespace: {{ .Values.product.namespace }}
+  {% comment %} namespace: {{ .Values.product.namespace }} {% endcomment %}
 spec:
   replicas: {{ .Values.product.replicaCount }}
   selector:
@@ -52,7 +52,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Values.product.service.name }}
-  namespace: {{ .Values.product.namespace }}
+  {% comment %} namespace: {{ .Values.product.namespace }} {% endcomment %}
 spec:
   selector:
     app: {{ .Values.product.selector }}

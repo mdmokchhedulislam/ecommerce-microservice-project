@@ -1,6 +1,5 @@
 payment:
   replicaCount: 2
-  namespace: microservice
   selector: payment-service
 
   image:
