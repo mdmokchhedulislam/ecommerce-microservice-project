@@ -17,13 +17,13 @@ dbConnected();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.use(cookieParser());
 
 app.use(cors({
   origin: 'http://localhost:5173', // React app port (Vite হলে 5173)
   credentials: true
 }));
+
 app.use('/api/product', productRouter)
 app.use('/api/brand', brandRouter)
 app.use('/api/category', categoryRouter)

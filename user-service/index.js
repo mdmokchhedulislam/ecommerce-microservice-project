@@ -1,14 +1,12 @@
 import express from 'express';
 import cors from 'cors';
+import userRouter from './routes/userRouter.js'
+import { dbConnected } from './utils/db.js';
 
 // import rateLimit from 'express-rate-limit';
 
 import cookieParser from "cookie-parser";
-
-
 import dotenv from "dotenv"
-import userRouter from './routes/userRouter.js'
-import { dbConnected } from './utils/db.js';
 
 
 const app = express();
@@ -19,18 +17,17 @@ dbConnected();
 
 
 
-app.use(cors({
-  origin: 'http://localhost:5173', // React app port (Vite হলে 5173)
-  credentials: true
-}));
+
 
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-
-
 app.use(cookieParser());
+
+app.use(cors({
+  origin: 'http://localhost:5173', // React app port (Vite হলে 5173)
+  credentials: true
+}));
 
 
 app.use("/api/auth", userRouter);

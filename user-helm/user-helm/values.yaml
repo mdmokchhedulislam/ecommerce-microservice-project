@@ -14,7 +14,7 @@ user:
     port: 3000
 
 config:
-  mongoUri: "mongodb://mongo:27017/data"
+  mongoUri: "mongodb://user-mongo-service:27017/data"
   port: "3000"
 
 db:
