@@ -15,7 +15,7 @@ export const auth = async (req, res, next) => {
 
     // Pass token in Authorization header
     const response = await axios.get(
-      "http://localhost:3000/api/auth/verify-token",
+      "http://www.mokchhedulislam.page.gd/api/auth/verify-token",
       {
         headers: { Authorization: `Bearer ${token}` },
       }
