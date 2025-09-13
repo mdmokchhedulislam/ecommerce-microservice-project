@@ -1,0 +1,110 @@
+---
+- name: Setup Bastion Host with AWS CLI, kubectl, and EKS access
+  hosts: all
+  become: yes
+  vars:
+    aws_region: "us-east-1"
+
+  tasks:
+
+  - name: Update apt and install dependencies
+    apt:
+      name:
+      - unzip
+      - curl
+      - python3-pip
+      state: present
+      update_cache: yes
+
+  - name: Download AWS CLI
+    get_url:
+      url: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
+      dest: /tmp/awscliv2.zip
+
+  - name: Unzip AWS CLI
+    unarchive:
+      src: /tmp/awscliv2.zip
+      dest: /tmp/
+      remote_src: yes
+
+  - name: Install AWS CLI
+    command: /tmp/aws/install
+    args:
+      creates: /usr/local/bin/aws
+
+  - name: Verify AWS CLI installation
+    command: aws --version
+    register: aws_cli_version
+
+  - name: Print AWS CLI version
+    debug:
+      var: aws_cli_version.stdout
+
+  - name: Download and install latest kubectl
+    shell: |
+      curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      chmod +x kubectl
+      sudo mv kubectl /usr/local/bin/kubectl
+    args:
+      chdir: /tmp
+
+  - name: Verify kubectl installation
+    command: kubectl version --client
+    register: kubectl_version
+
+  - name: Print kubectl version
+    debug:
+      var: kubectl_version.stdout
+
+  - name: Install dependencies
+    ansible.builtin.shell: |
+      pip install boto3 botocore
+
+
+
+  - name: Create AWS directory
+    file:
+      path: /home/ubuntu/.aws
+      state: directory
+      owner: ubuntu
+      group: ubuntu
+      mode: '0700'
+
+  - name: Configure AWS credentials
+    copy:
+      dest: /home/ubuntu/.aws/credentials
+      content: |
+        [default]
+        aws_access_key_id="${{ secrets.aws_access_key }}"
+        aws_secret_access_key="{{ secrets.aws_secret_key }}"
+      owner: ubuntu
+      group: ubuntu
+      mode: '0600'
+
+  - name: Configure AWS config
+    copy:
+      dest: /home/ubuntu/.aws/config
+      content: |
+        [default]
+        region={{ aws_region }}
+        output=json
+      owner: ubuntu
+      group: ubuntu
+      mode: '0644'
+
+  - name: Update kubeconfig for EKS
+    become: no
+    environment:
+      AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+      AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+    command: >
+      aws eks update-kubeconfig --name {{ eks_cluster_name }} --region {{ aws_region }}
+
+  - name: Verify EKS cluster access
+    become: no
+    command: kubectl get nodes
+    register: eks_nodes
+
+  - name: Show EKS nodes
+    debug:
+      var: eks_nodes.stdout

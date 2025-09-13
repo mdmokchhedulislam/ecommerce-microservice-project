@@ -5,7 +5,7 @@ metadata:
   namespace: user
 spec:
   selector:
-    app: mongo
+    app: {{ .Values.service.selector }}
   ports:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.port }}

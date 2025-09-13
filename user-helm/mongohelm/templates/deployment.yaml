@@ -7,11 +7,11 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: mongo
+      app: {{ .Values.service.selector }}
   template:
     metadata:
       labels:
-        app: mongo
+        app: {{ .Values.service.selector }}
     spec:
       containers:
         - name: mongo

@@ -6,9 +6,10 @@ image:
   pullPolicy: IfNotPresent
 
 service:
-  name: mongo-service
+  name: user-mongo-service
   type: ClusterIP
   port: 27017
+  selector: user-mongo
 
 storage:
   size: 1Gi
