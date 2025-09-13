@@ -17,7 +17,8 @@ export const auth = async (req, res, next) => {
     const response = await axios.get(
       "http://www.mokchhedulislam.page.gd/api/auth/verify-token",
       {
-        headers: { Authorization: `Bearer ${token}` },
+        // headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true
       }
     );
 
