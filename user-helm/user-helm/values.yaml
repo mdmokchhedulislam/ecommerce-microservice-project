@@ -1,6 +1,5 @@
 user:
   replicaCount: 2
-  # namespace: microservice
   selector: user-mongo
 
   image:

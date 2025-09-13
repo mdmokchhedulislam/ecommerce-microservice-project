@@ -2,7 +2,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: backend-config
-  {% comment %} namespace: {{ .Values.cart.namespace }} {% endcomment %}
 data:
   MONGO_URI: "mongodb://{{ .Values.db.service.name }}:{{ .Values.db.service.port }}/{{ .Values.db.service.dbname }}"
   PORT: "{{ .Values.cart.service.port }}"
