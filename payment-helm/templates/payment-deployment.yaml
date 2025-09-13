@@ -36,12 +36,12 @@ spec:
             - name: MONGO_URI
               valueFrom:
                 configMapKeyRef:
-                  name: backend-config
+                  name: payment-config
                   key: MONGO_URI
             - name: PORT
               valueFrom:
                 configMapKeyRef:
-                  name: backend-config
+                  name: payment-config
                   key: PORT
 
 

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: backend-config
+  name: payment-config
 data:
   MONGO_URI: "mongodb://{{ .Values.db.service.name }}:{{ .Values.db.service.port }}/{{ .Values.db.service.dbname }}"
   PORT: "{{ .Values.payment.service.port }}"
