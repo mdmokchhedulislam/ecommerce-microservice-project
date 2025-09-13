@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.db.service.name }}
+  namespace: {{ .Values.cart.namespace }}
+  
+spec:
+  replicas: {{ .Values.db.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.db.selector }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.db.selector }}
+    spec:
+      containers:
+        - name: {{ .value.db.image.containarname }}
+          image: "{{ .Values.db.image.repository }}:{{ .Values.db.image.tag }}"
+          imagePullPolicy: {{ .Values.db.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.db.service.port }}
+          volumeMounts:
+            - name: mongo-storage
+              mountPath: {{ .Values.db.storage.mntpath }}
+      volumes:
+        - name: mongo-storage
+          persistentVolumeClaim:
+            claimName: cart-mongo-pvc
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.db.service.name }}
+  namespace: {{ .Values.user.namespace }}
+spec:
+  selector:
+    app: {{ .Values.db.selector }}
+  ports:
+    - port: {{ .Values.db.service.port }}
+      targetPort: {{ .Values.db.service.port }}
+  type: {{ .Values.db.service.type }}

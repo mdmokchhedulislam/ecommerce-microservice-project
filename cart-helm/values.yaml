@@ -1,0 +1,36 @@
+cart:
+  replicaCount: 2
+  namespace: cart
+  selector: cart-service
+
+  image:
+    repository: mokchhedul/ecomcart
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  service:
+    name: cart-service
+    type: ClusterIP
+    port: 3002
+
+db:
+  replicaCount: 1
+  selector: cart-mongo
+
+  image:
+    repository: mongo
+    tag: latest
+    pullPolicy: IfNotPresent
+    containarname: cart-mongo
+
+  service:
+    name: cart-mongo-service
+    type: ClusterIP
+    port: 27017
+    dbname: cart
+
+  storage:
+    size: 1Gi
+    path: /mnt/data/mongo
+    accessMode: ReadWriteOnce
+    mntpath: /data/db

@@ -1,0 +1,36 @@
+product:
+  replicaCount: 2
+  namespace: product
+  selector: product-service
+
+  image:
+    repository: mokchhedul/ecomproduct
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  service:
+    name: product-service
+    type: ClusterIP
+    port: 3001
+
+db:
+  replicaCount: 1
+  selector: product-mongo
+
+  image:
+    repository: mongo
+    tag: latest
+    pullPolicy: IfNotPresent
+    containarname: product-mongo
+
+  service:
+    name: product-mongo-service
+    type: ClusterIP
+    port: 27017
+    dbname: product
+
+  storage:
+    size: 1Gi
+    path: /mnt/data/mongo
+    accessMode: ReadWriteOnce
+    mntpath: /data/db

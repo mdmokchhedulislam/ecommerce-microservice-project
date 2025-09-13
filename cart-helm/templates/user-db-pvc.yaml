@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cart-mongo-pvc
+  namespace: {{ .Values.cart.namespace }}
+spec:
+  accessModes:
+    - {{ .Values.db.storage.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.db.storage.size }}

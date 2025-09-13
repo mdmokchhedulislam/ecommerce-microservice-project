@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.cart.service.name }}
+  namespace: {{ .Values.cart.namespace }}
+spec:
+  replicas: {{ .Values.cart.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.cart.selector }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.cart.selector }}
+    spec:
+      initContainers:
+        - name: wait-for-mongo
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              until nc -z {{ .Values.db.service.name }} {{ .Values.db.service.port }}; do
+                echo "Waiting for MongoDB..."
+                sleep 5
+              done
+
+
+
+      containers:
+        - name: {{ .Values.cart.service.name }}
+          image: "{{ .Values.cart.image.repository }}:{{ .Values.cart.image.tag }}"
+          imagePullPolicy: {{ .Values.cart.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.cart.service.port }}
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: MONGO_URI
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: PORT
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.cart.service.name }}
+  namespace: {{ .Values.cart.namespace }}
+spec:
+  selector:
+    app: {{ .Values.cart.selector }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.cart.service.port }}
+      targetPort: {{ .Values.cart.service.port }}
+  type: {{ .Values.cart.service.type }}
