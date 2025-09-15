@@ -1,8 +1,6 @@
 import express from 'express'
 import cors from "cors"
 import productRouter from './routes/productRoute.js'
-import brandRouter from './routes/brandRoute.js'
-import categoryRouter from './routes/categoryRoute.js'
 import { dbConnected } from './utils/db.js'
 import cookieParser from 'cookie-parser';
 import dotenv from "dotenv"
