@@ -7,7 +7,7 @@ export const isAuthenticate = (req, res, next) => {
   try {
     const token = req.cookies?.token;
     if (!token) {
-      throw new ApiError(401, "Unauthorized: Token not found");
+      throw new ApiError(401, "Unauthorized: Token not found need to authorized");
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET_ACCESS);
     req.user = decoded;
