@@ -1,11 +1,12 @@
 name: Build image and push in dockerhub
+
 on:
   push:
     paths:
-      - 'k8s/user-service/**'
-      - 'k8s/product-service/**'
-      - 'k8s/cart/**'
-      - 'k8s/payment/**'
+      - 'services/user-service/**'
+      - 'services/product-service/**'
+      - 'services/cart/**'
+      - 'services/payment/**'
 
 jobs:
   filter:
@@ -24,13 +25,13 @@ jobs:
         with:
           filters: |
             user:
-              - 'user-service/**'
+              - 'services/user-service/**'
             product:
-              - 'product-service/**'
+              - 'services/product-service/**'
             order:
-              - 'cart/**'
+              - 'services/cart/**'
             payment:
-              - 'payment/**'
+              - 'services/payment/**'
 
   deploy:
     needs: filter
@@ -50,7 +51,7 @@ jobs:
         if: needs.filter.outputs.user_changed == 'true'
         run: |
           echo "Deploying User Service..."
-          cd user-service
+          cd services/user-service
           docker build -t ${{ secrets.DOCKER_USERNAME }}/userservice:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/userservice:latest
 
@@ -59,7 +60,7 @@ jobs:
         if: needs.filter.outputs.product_changed == 'true'
         run: |
           echo "Deploying Product Service..."
-          cd product-service
+          cd services/product-service
           docker build -t ${{ secrets.DOCKER_USERNAME }}/ecomproduct:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/ecomproduct:latest
 
@@ -68,7 +69,7 @@ jobs:
         if: needs.filter.outputs.order_changed == 'true'
         run: |
           echo "Deploying Order Service..."
-          cd cart
+          cd services/cart
           docker build -t ${{ secrets.DOCKER_USERNAME }}/ecomcart:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/ecomcart:latest
 
@@ -77,9 +78,10 @@ jobs:
         if: needs.filter.outputs.payment_changed == 'true'
         run: |
           echo "Deploying Payment Service..."
-          cd payment
+          cd services/payment
           docker build -t ${{ secrets.DOCKER_USERNAME }}/ecompayment:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/ecompayment:latest
+
   setup-bastion_host:
     needs: deploy
     runs-on: ubuntu-latest
@@ -88,38 +90,38 @@ jobs:
       AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    # Bastion host SSH key prepare
-    - name: Setup SSH key
-      run: |
-        echo "${{ secrets.BASTION_SSH_KEY }}" > mainaccount.pem
-        chmod 600 mainaccount.pem
+      # Bastion host SSH key prepare
+      - name: Setup SSH key
+        run: |
+          echo "${{ secrets.BASTION_SSH_KEY }}" > mainaccount.pem
+          chmod 600 mainaccount.pem
 
-    # (Optional) Configure AWS credentials if dynamic inventory needs it
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-        aws-region: us-east-1
+      # Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: us-east-1
 
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.12'
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
 
-    - name: Upgrade pip
-      run: python -m pip install --upgrade pip
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
 
-    - name: Install Ansible with AWS support
-      run: pip install "ansible[amazon]" boto3 botocore
+      - name: Install Ansible with AWS support
+        run: pip install "ansible[amazon]" boto3 botocore
 
-    - name: Run Ansible Playbook
-      run: |
-         ansible-playbook ansible/check-playbook.yml \
-         -i ansible/inventory/aws_ec2.yml \
-         -u ubuntu --become \
-         --private-key mainaccount.pem \
-         --ssh-extra-args "-o StrictHostKeyChecking=no"
+      - name: Run Ansible Playbook
+        run: |
+          ansible-playbook ansible/check-playbook.yml \
+          -i ansible/inventory/aws_ec2.yml \
+          -u ubuntu --become \
+          --private-key mainaccount.pem \
+          --ssh-extra-args "-o StrictHostKeyChecking=no"
