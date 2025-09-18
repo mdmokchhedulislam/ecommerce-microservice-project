@@ -5,9 +5,10 @@ import { createProduct, findProduct, ListByBrandService, ListByCategoryService }
 import { upload } from "../utils/multer.js";
 import { createBrand, findBrand } from "../controller/brandController.js";
 import { createCategory, findCategory } from "../controller/categoryController.js";
+import authMiddleware from "../middleware/verify.js";
 
-router.post("/create", upload.single("image"), createProduct);
-router.get("/find-product",findProduct);
+router.post("/create",authMiddleware, upload.single("image"), createProduct);
+router.get("/find-product",authMiddleware, findProduct);
 router.get("/find-product/brand/:brandid",ListByBrandService);
 router.get("/find-product/category/:categoryid",ListByCategoryService);
 router.post("/brand", upload.single("brandImg"), createBrand);

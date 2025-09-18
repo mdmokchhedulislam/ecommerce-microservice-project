@@ -14,6 +14,6 @@ router.post("/login", loginUser);
 router.get("/profile",isAuthenticate, findProfile)
 router.get("/logout",isAuthenticate, logOut);
 router.put("/update/role",isAuthenticate, updateUserRole);
-router.get("/verify-token", verifyTokenFromCookie);
+router.get("/verify", verifyTokenFromCookie);
 
 export default router;

@@ -1,13 +1,22 @@
-// import express from "express";
-// import { isAuthenticate } from "../middleware/auth.js";
-// import { forwardRequest } from "../utils/http_proxy.js";
 
-// const router = express.Router();
-// router.use(isAuthenticate);
+import express from "express";
+import { isAuthenticate } from "../middleware/auth.js";
+import { forwardRequest } from "../utils/http_proxy.js";
 
-// router.all("/*", (req, res) => {
-//   const CART_SERVICE_URL = process.env.CART_SERVICE_URL || "http://cart-service:5002";
-//   forwardRequest(req, res, CART_SERVICE_URL);
-// });
+const router = express.Router();
 
-// export default router;
+// Authentication middleware
+router.use(isAuthenticate);
+
+// সব route User Service-এ forward
+router.use(async (req, res) => {
+  try {
+   const PAYMENT_SERVICE_URL = process.env.PAYMENT_SERVICE_URL;
+    await forwardRequest(req, res, PAYMENT_SERVICE_URL);
+  } catch (error) {
+    console.error("Error forwarding request to User Service:", error.message);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+});
+
+export default router;

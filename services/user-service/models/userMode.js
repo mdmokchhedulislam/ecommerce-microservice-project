@@ -1,42 +1,49 @@
 import mongoose from "mongoose";
-import jwt from "jsonwebtoken"
-import bcrypt from "bcrypt"
-const userSchema =new mongoose.Schema({
-    name:{
-        type:String,
-        required:true,
-        lowercase:true,
-        trim:true,
-        index:true
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs"; // bcryptjs ব্যবহার করলে compatibility ভালো
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true,
+      index: true,
     },
-    email:{
-        type: String,
-        required: true,
-        index:true
+    email: {
+      type: String,
+      required: true,
+      index: true,
+      unique: true,
     },
-    password:{
-        type: String,
-        required: true,
-        trim : true,
-        index:true  
+    password: {
+      type: String,
+      required: true,
+      trim: true,
+      index: true,
     },
-    role:{
-        type:String,
-        required:true,
-        enum:["admin","user"],
-        default:"user"
+    role: {
+      type: String,
+      required: true,
+      enum: ["admin", "user"],
+      default: "user",
     },
-    image:{
-        type:String,
-        required:true,
+    image: {
+      type: String,
+      required: true,
     },
-    phone:{
-        type:String,
-        required:true
-    }
-},{
-   timestamps:true 
-})
+    phone: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
+
 
 userSchema.pre("save",async function(next){
     console.log("password1")
@@ -59,11 +66,11 @@ userSchema.methods.generateToken =function(){
             //payload:
             _id:this._id,
             email:this.email,
-            username:this.username,
-            fullName:this.fullName,
+            name:this.name,
+            // fullName:this.fullName,
         },
         //token secret
-        "mokchhedulislam"
+        process.env.JWT_SECRET
         
         ,
         {
@@ -73,6 +80,4 @@ userSchema.methods.generateToken =function(){
     )
 }
 
-
-
-export const User = mongoose.model('User',userSchema)
+export const User = mongoose.model("User", userSchema);

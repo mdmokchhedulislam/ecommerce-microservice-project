@@ -4,7 +4,7 @@ import CreateInvoice from "../controller/invoiceController.js";
 const router = express.Router();
 
 
-router.post("/create-invoice", auth, CreateInvoice);
+router.post("/create-invoice", CreateInvoice);
 
 // router.get("/payment-success/:trxID");
 

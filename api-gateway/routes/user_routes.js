@@ -6,10 +6,10 @@ import { forwardRequest } from "../utils/http_proxy.js";
 const router = express.Router();
 
 // Authentication middleware
-router.use(isAuthenticate);
+// router.use(isAuthenticate);
 
 // সব route User Service-এ forward
-router.use(async (req, res, next) => {
+router.use(async (req, res) => {
   try {
     const USER_SERVICE_URL = process.env.USER_SERVICE_URL;
     await forwardRequest(req, res, USER_SERVICE_URL);

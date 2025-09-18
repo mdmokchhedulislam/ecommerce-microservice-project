@@ -30,10 +30,6 @@ export const addToCart = async (req, res) => {
   }
 };
 
-
-
-
-
 export const getCartItems = async (req, res) => {
   try {
     const user_id = req.user._id;

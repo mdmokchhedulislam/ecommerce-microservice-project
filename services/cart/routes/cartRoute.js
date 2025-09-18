@@ -4,8 +4,8 @@ import { addToCart,getCartItems,updateCartItem,removeCartItem } from "../control
 import { auth } from "../middleware/verify.js";
 
 
-router.post("/saveCart",auth, addToCart);
-router.get("/UpdateCartList/:cartID",auth, updateCartItem);
-router.get("/RemoveCartList",auth,removeCartItem);
-router.get("/CartList",auth, getCartItems);
+router.post("/saveCart", addToCart);
+router.get("/UpdateCartList/:cartID", updateCartItem);
+router.get("/RemoveCartList",removeCartItem);
+router.get("/CartList", getCartItems);
 export default router;
