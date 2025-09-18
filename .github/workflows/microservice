@@ -2,10 +2,10 @@ name: Build image and push in dockerhub
 on:
   push:
     paths:
-      - 'user-service/**'
-      - 'product-service/**'
-      - 'cart/**'
-      - 'payment/**'
+      - 'k8s/user-service/**'
+      - 'k8s/product-service/**'
+      - 'k8s/cart/**'
+      - 'k8s/payment/**'
 
 jobs:
   filter:
