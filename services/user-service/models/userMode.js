@@ -63,11 +63,10 @@ userSchema.methods.isPasswordCorrect = async function (password){
 userSchema.methods.generateToken =function(){
     return jwt.sign(
         {
-            //payload:
+
             _id:this._id,
             email:this.email,
             name:this.name,
-            // fullName:this.fullName,
         },
         //token secret
         process.env.JWT_SECRET

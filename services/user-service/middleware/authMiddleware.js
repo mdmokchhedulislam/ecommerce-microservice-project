@@ -5,12 +5,10 @@ dotenv.config();
 
 export const isAuthenticate = (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    const token = req.cookies?.token;
+    if (!token) {
       throw new ApiError(401, "Unauthorized: Token not found");
     }
-
-    const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET_ACCESS);
     req.user = decoded;
     next();
