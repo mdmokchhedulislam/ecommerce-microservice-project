@@ -81,7 +81,7 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/ecompayment:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/ecompayment:latest
   setup-bastion_host:
-    needs: build-and-push
+    needs: deploy
     runs-on: ubuntu-latest
     env:                               
       AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
