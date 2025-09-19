@@ -70,8 +70,8 @@ pipeline {
                             // Nodemon permission issue এড়াতে direct node ব্যবহার
                             sh "node index.js &" // background এ run করলে pipeline hang হবে না
 
-                            sh "docker build -t username/user-service:${IMAGE_TAG} ."
-                            sh "docker push username/user-service:${IMAGE_TAG}"
+                            sh "docker build -t mokchhedul/user-service:${IMAGE_TAG} ."
+                            sh "docker push mokchhedul/user-service:${IMAGE_TAG}"
 
                             def previousVersion = sh(
                                 script: "helm get values user-service -o json | jq -r '.image.tag' 2>/dev/null || echo 'none'",
