@@ -4,7 +4,7 @@ product:
 
   image:
     repository: mokchhedul/product-service
-    tag: latest
+    tag: a237aa3
     pullPolicy: IfNotPresent
 
   service:
