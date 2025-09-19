@@ -127,8 +127,6 @@ pipeline {
 
 
 
-
-
 // pipeline {
 //     agent any
 //     tools {
@@ -320,39 +318,39 @@ pipeline {
                 //             }
                 //         }
                 //     }
-                // }
-            }
-        }
-        } // stages block ends
+    //             // }
+    //         }
+    //     }
+    //     } // stages block ends
         
-        post {
-            always {
-                script {
-                    sh "find ${NPM_CACHE_DIR} -type f -name '*.tgz' -mtime +7 -delete || true"
-                    if (currentBuild.result == 'FAILURE') {
-                        sendFailureNotification()
-                    }else if (currentBuild.result == 'SUCCESS') {
-                        sendSuccessNotification()
-                    }else {
-                        sendGenericNotification()
-                    }
-                }
-            }
-            success {
-                echo "Pipeline finished successfully."
-            }
-            failure {
-                script {
-                    echo "Pipeline failed. Attempting rollback..."
-                    rollbackDeployments()
-                    echo "Rollback completed. Check logs for details!"
-                }
-            }
-            unstable {
-                echo "Pipeline finished with unstable state."
-            }
-        }
-    }
+    //     post {
+    //         always {
+    //             script {
+    //                 sh "find ${NPM_CACHE_DIR} -type f -name '*.tgz' -mtime +7 -delete || true"
+    //                 if (currentBuild.result == 'FAILURE') {
+    //                     sendFailureNotification()
+    //                 }else if (currentBuild.result == 'SUCCESS') {
+    //                     sendSuccessNotification()
+    //                 }else {
+    //                     sendGenericNotification()
+    //                 }
+    //             }
+    //         }
+    //         success {
+    //             echo "Pipeline finished successfully."
+    //         }
+    //         failure {
+    //             script {
+    //                 echo "Pipeline failed. Attempting rollback..."
+    //                 rollbackDeployments()
+    //                 echo "Rollback completed. Check logs for details!"
+    //             }
+    //         }
+    //         unstable {
+    //             echo "Pipeline finished with unstable state."
+    //         }
+    //     }
+    // }
     
     //         stage('Apply Ingress') {
     //             steps {
