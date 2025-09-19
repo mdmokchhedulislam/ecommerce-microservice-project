@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools {
+        nodejs 'nodejs23' 
+    }
     
     environment {
         DOCKERHUB_CRED = credentials('dockerhub-id')
