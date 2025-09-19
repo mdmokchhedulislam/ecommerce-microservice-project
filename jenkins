@@ -33,14 +33,14 @@ pipeline {
                     
                     env.USER_CHANGED = changedFiles.any { it.startsWith("services/user-service/") }.toString()
                     env.PRODUCT_CHANGED = changedFiles.any { it.startsWith("services/product-service/") }.toString()
-                    env.PAYMENT_CHANGED = changedFiles.any { it.startsWith("services/payment-service/") }.toString()
-                    env.CART_CHANGED = changedFiles.any { it.startsWith("services/cart-service/") }.toString()
+                    env.PAYMENT_CHANGED = changedFiles.any { it.startsWith("services/payment/") }.toString()
+                    env.CART_CHANGED = changedFiles.any { it.startsWith("services/cart/") }.toString()
                     
                     env.CHANGED_SERVICES = []
                     if (env.USER_CHANGED == 'true') env.CHANGED_SERVICES.add('user-service')
                     if (env.PRODUCT_CHANGED == 'true') env.CHANGED_SERVICES.add('product-service')
-                    if (env.PAYMENT_CHANGED == 'true') env.CHANGED_SERVICES.add('payment-service')
-                    if (env.CART_CHANGED == 'true') env.CHANGED_SERVICES.add('cart-service')
+                    if (env.PAYMENT_CHANGED == 'true') env.CHANGED_SERVICES.add('payment')
+                    if (env.CART_CHANGED == 'true') env.CHANGED_SERVICES.add('cart')
                 }
             }
         }
@@ -130,24 +130,24 @@ pipeline {
                         }
                     }
                     steps {
-                        dir('services/payment-service') {
+                        dir('services/payment') {
                             script {
                                 try {
-                                    def serviceCacheDir = "${NPM_CACHE_DIR}/payment-service"
+                                    def serviceCacheDir = "${NPM_CACHE_DIR}/payment"
                                     sh "mkdir -p ${serviceCacheDir}"
                                     sh "npm install --cache ${serviceCacheDir} --prefer-offline"
                                     sh "npm test"
-                                    sh "docker build -t username/payment-service:${IMAGE_TAG} ."
-                                    sh "docker push username/payment-service:${IMAGE_TAG}"
+                                    sh "docker build -t username/payment:${IMAGE_TAG} ."
+                                    sh "docker push username/payment:${IMAGE_TAG}"
                                     
                                     def previousVersion = sh(
-                                    script: "helm get values payment-service -o json | jq -r '.image.tag' 2>/dev/null || echo 'none'",
+                                    script: "helm get values payment -o json | jq -r '.image.tag' 2>/dev/null || echo 'none'",
                                     returnStdout: true
                                     ).trim()
                                     env.PAYMENT_PREVIOUS_VERSION = previousVersion
                                     
-                                    sh "helm upgrade --install payment-service k8s/payment-helm --set image.tag=${IMAGE_TAG} --wait --timeout 300s"
-                                    sh "kubectl rollout status deployment/payment-service --timeout=120s"
+                                    sh "helm upgrade --install payment k8s/payment-helm --set image.tag=${IMAGE_TAG} --wait --timeout 300s"
+                                    sh "kubectl rollout status deployment/payment --timeout=120s"
                                 }catch (Exception e) {
                                     currentBuild.result = 'FAILURE'
                                     error "Payment Service deployment failed: ${e.getMessage()}"
@@ -164,24 +164,24 @@ pipeline {
                         }
                     }
                     steps {
-                        dir('services/cart-service') {
+                        dir('services/cart') {
                             script {
                                 try {
-                                    def serviceCacheDir = "${NPM_CACHE_DIR}/cart-service"
+                                    def serviceCacheDir = "${NPM_CACHE_DIR}/cart"
                                     sh "mkdir -p ${serviceCacheDir}"
                                     sh "npm install --cache ${serviceCacheDir} --prefer-offline"
                                     sh "npm test"
-                                    sh "docker build -t username/cart-service:${IMAGE_TAG} ."
-                                    sh "docker push username/cart-service:${IMAGE_TAG}"
+                                    sh "docker build -t username/cart:${IMAGE_TAG} ."
+                                    sh "docker push username/cart:${IMAGE_TAG}"
                                     
                                     def previousVersion = sh(
-                                    script: "helm get values cart-service -o json | jq -r '.image.tag' 2>/dev/null || echo 'none'",
+                                    script: "helm get values cart -o json | jq -r '.image.tag' 2>/dev/null || echo 'none'",
                                     returnStdout: true
                                     ).trim()
                                     env.CART_PREVIOUS_VERSION = previousVersion
                                     
-                                    sh "helm upgrade --install cart-service k8s/cart-helm --set image.tag=${IMAGE_TAG} --wait --timeout 300s"
-                                    sh "kubectl rollout status deployment/cart-service --timeout=120s"
+                                    sh "helm upgrade --install cart k8s/cart-helm --set image.tag=${IMAGE_TAG} --wait --timeout 300s"
+                                    sh "kubectl rollout status deployment/cart --timeout=120s"
                                 }catch (Exception e) {
                                     currentBuild.result = 'FAILURE'
                                     error "Cart Service deployment failed: ${e.getMessage()}"
@@ -313,21 +313,21 @@ pipeline {
     
     //         if (env.PAYMENT_CHANGED == 'true' && env.PAYMENT_PREVIOUS_VERSION != null && env.PAYMENT_PREVIOUS_VERSION != 'none') {
     //             try {
-    //                 echo "Rolling back payment-service to version: ${env.PAYMENT_PREVIOUS_VERSION}"
-    //                 sh "helm upgrade --install payment-service k8s/payment-helm --set image.tag=${env.PAYMENT_PREVIOUS_VERSION} --wait --timeout 300s"
-    //                 sh "kubectl rollout status deployment/payment-service --timeout=120s"
+    //                 echo "Rolling back payment to version: ${env.PAYMENT_PREVIOUS_VERSION}"
+    //                 sh "helm upgrade --install payment k8s/payment-helm --set image.tag=${env.PAYMENT_PREVIOUS_VERSION} --wait --timeout 300s"
+    //                 sh "kubectl rollout status deployment/payment --timeout=120s"
     //             } catch (Exception e) {
-    //                 echo "Failed to rollback payment-service: ${e.getMessage()}"
+    //                 echo "Failed to rollback payment: ${e.getMessage()}"
     //             }
     //         }
     
     //         if (env.CART_CHANGED == 'true' && env.CART_PREVIOUS_VERSION != null && env.CART_PREVIOUS_VERSION != 'none') {
     //             try {
-    //                 echo "Rolling back cart-service to version: ${env.CART_PREVIOUS_VERSION}"
-    //                 sh "helm upgrade --install cart-service k8s/cart-helm --set image.tag=${env.CART_PREVIOUS_VERSION} --wait --timeout 300s"
-    //                 sh "kubectl rollout status deployment/cart-service --timeout=120s"
+    //                 echo "Rolling back cart to version: ${env.CART_PREVIOUS_VERSION}"
+    //                 sh "helm upgrade --install cart k8s/cart-helm --set image.tag=${env.CART_PREVIOUS_VERSION} --wait --timeout 300s"
+    //                 sh "kubectl rollout status deployment/cart --timeout=120s"
     //             } catch (Exception e) {
-    //                 echo "Failed to rollback cart-service: ${e.getMessage()}"
+    //                 echo "Failed to rollback cart: ${e.getMessage()}"
     //             }
     //         }
     
