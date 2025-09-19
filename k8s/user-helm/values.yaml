@@ -3,7 +3,7 @@ user:
   selector: user-mongo
 
   image:
-    repository: mokchhedul/userservice
+    repository: mokchhedul/user-service
     tag: latest
     pullPolicy: IfNotPresent
 

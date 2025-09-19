@@ -3,7 +3,7 @@ cart:
   selector: cart-service
 
   image:
-    repository: mokchhedul/ecomcart
+    repository: mokchhedul/cart
     tag: latest
     pullPolicy: IfNotPresent
 

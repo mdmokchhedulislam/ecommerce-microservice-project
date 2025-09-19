@@ -3,7 +3,7 @@ product:
   selector: product-service
 
   image:
-    repository: mokchhedul/ecomproduct
+    repository: mokchhedul/product-service
     tag: latest
     pullPolicy: IfNotPresent
 

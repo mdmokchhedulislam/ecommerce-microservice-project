@@ -3,7 +3,7 @@ payment:
   selector: payment-service
 
   image:
-    repository: mokchhedul/ecompayment
+    repository: mokchhedul/payment
     tag: latest
     pullPolicy: IfNotPresent
 
