@@ -59,13 +59,13 @@ const loginUser = asyncHandler(
         const user = await User.findOne({ email })
 
         if (!user) {
-            throw new ApiError(404, "user is not found")
+            throw new ApiError(404, "user is not found in this server")
         }
 
         console.log(user);
         const isPasswordValid = await user.isPasswordCorrect(password)
         if (!isPasswordValid) {
-            throw new ApiError(401, "Invalid password you should add correct password")
+            throw new ApiError(401, "Invalid password")
         }
 
         const token = await user.generateToken()
