@@ -196,6 +196,7 @@ pipeline {
                 }
             }
         }
+    }
         
         post {
             always {
