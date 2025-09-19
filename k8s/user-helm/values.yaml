@@ -4,7 +4,7 @@ user:
 
   image:
     repository: mokchhedul/user-service
-    tag: a237aa3
+    tag: 32579f5
 
     pullPolicy: IfNotPresent
 
