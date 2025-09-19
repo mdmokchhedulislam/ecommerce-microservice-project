@@ -89,107 +89,107 @@ pipeline {
                     }
                 }
                 
-                stage('Product Service') {
-                    when {
-                        expression {
-                            env.PRODUCT_PREVIOUS_VERSION == null || env.PRODUCT_PREVIOUS_VERSION == 'none' || env.PRODUCT_CHANGED == 'true'
-                        }
-                    }
-                    steps {
-                        dir('services/product-service') {
-                            script {
-                                try {
-                                    def serviceCacheDir = "${NPM_CACHE_DIR}/product-service"
-                                    sh "mkdir -p ${serviceCacheDir}"
-                                    sh "npm install --cache ${serviceCacheDir} --prefer-offline"
-                                    sh "npm test"
-                                    sh "docker build -t username/product-service:${IMAGE_TAG} ."
-                                    sh "docker push username/product-service:${IMAGE_TAG}"
+                // stage('Product Service') {
+                //     when {
+                //         expression {
+                //             env.PRODUCT_PREVIOUS_VERSION == null || env.PRODUCT_PREVIOUS_VERSION == 'none' || env.PRODUCT_CHANGED == 'true'
+                //         }
+                //     }
+                //     steps {
+                //         dir('services/product-service') {
+                //             script {
+                //                 try {
+                //                     def serviceCacheDir = "${NPM_CACHE_DIR}/product-service"
+                //                     sh "mkdir -p ${serviceCacheDir}"
+                //                     sh "npm install --cache ${serviceCacheDir} --prefer-offline"
+                //                     sh "npm test"
+                //                     sh "docker build -t username/product-service:${IMAGE_TAG} ."
+                //                     sh "docker push username/product-service:${IMAGE_TAG}"
                                     
-                                    def previousVersion = sh(
-                                    script: "helm get values product-service -o json | jq -r '.image.tag' 2>/dev/null || echo 'none'",
-                                    returnStdout: true
-                                    ).trim()
-                                    env.PRODUCT_PREVIOUS_VERSION = previousVersion
+                //                     def previousVersion = sh(
+                //                     script: "helm get values product-service -o json | jq -r '.image.tag' 2>/dev/null || echo 'none'",
+                //                     returnStdout: true
+                //                     ).trim()
+                //                     env.PRODUCT_PREVIOUS_VERSION = previousVersion
                                     
-                                    sh "helm upgrade --install product-service k8s/product-helm --set image.tag=${IMAGE_TAG} --wait --timeout 300s"
-                                    sh "kubectl rollout status deployment/product-service --timeout=120s"
-                                }catch (Exception e) {
-                                    currentBuild.result = 'FAILURE'
-                                    error "Product Service deployment failed: ${e.getMessage()}"
-                                }
-                            }
-                        }
-                    }
-                }
+                //                     sh "helm upgrade --install product-service k8s/product-helm --set image.tag=${IMAGE_TAG} --wait --timeout 300s"
+                //                     sh "kubectl rollout status deployment/product-service --timeout=120s"
+                //                 }catch (Exception e) {
+                //                     currentBuild.result = 'FAILURE'
+                //                     error "Product Service deployment failed: ${e.getMessage()}"
+                //                 }
+                //             }
+                //         }
+                //     }
+                // }
                 
-                stage('Payment Service') {
-                    when {
-                        expression {
-                            env.PAYMENT_PREVIOUS_VERSION == null || env.PAYMENT_PREVIOUS_VERSION == 'none' || env.PAYMENT_CHANGED == 'true'
-                        }
-                    }
-                    steps {
-                        dir('services/payment') {
-                            script {
-                                try {
-                                    def serviceCacheDir = "${NPM_CACHE_DIR}/payment"
-                                    sh "mkdir -p ${serviceCacheDir}"
-                                    sh "npm install --cache ${serviceCacheDir} --prefer-offline"
-                                    sh "npm test"
-                                    sh "docker build -t username/payment:${IMAGE_TAG} ."
-                                    sh "docker push username/payment:${IMAGE_TAG}"
+                // stage('Payment Service') {
+                //     when {
+                //         expression {
+                //             env.PAYMENT_PREVIOUS_VERSION == null || env.PAYMENT_PREVIOUS_VERSION == 'none' || env.PAYMENT_CHANGED == 'true'
+                //         }
+                //     }
+                //     steps {
+                //         dir('services/payment') {
+                //             script {
+                //                 try {
+                //                     def serviceCacheDir = "${NPM_CACHE_DIR}/payment"
+                //                     sh "mkdir -p ${serviceCacheDir}"
+                //                     sh "npm install --cache ${serviceCacheDir} --prefer-offline"
+                //                     sh "npm test"
+                //                     sh "docker build -t username/payment:${IMAGE_TAG} ."
+                //                     sh "docker push username/payment:${IMAGE_TAG}"
                                     
-                                    def previousVersion = sh(
-                                    script: "helm get values payment -o json | jq -r '.image.tag' 2>/dev/null || echo 'none'",
-                                    returnStdout: true
-                                    ).trim()
-                                    env.PAYMENT_PREVIOUS_VERSION = previousVersion
+                //                     def previousVersion = sh(
+                //                     script: "helm get values payment -o json | jq -r '.image.tag' 2>/dev/null || echo 'none'",
+                //                     returnStdout: true
+                //                     ).trim()
+                //                     env.PAYMENT_PREVIOUS_VERSION = previousVersion
                                     
-                                    sh "helm upgrade --install payment k8s/payment-helm --set image.tag=${IMAGE_TAG} --wait --timeout 300s"
-                                    sh "kubectl rollout status deployment/payment --timeout=120s"
-                                }catch (Exception e) {
-                                    currentBuild.result = 'FAILURE'
-                                    error "Payment Service deployment failed: ${e.getMessage()}"
-                                }
-                            }
-                        }
-                    }
-                }
+                //                     sh "helm upgrade --install payment k8s/payment-helm --set image.tag=${IMAGE_TAG} --wait --timeout 300s"
+                //                     sh "kubectl rollout status deployment/payment --timeout=120s"
+                //                 }catch (Exception e) {
+                //                     currentBuild.result = 'FAILURE'
+                //                     error "Payment Service deployment failed: ${e.getMessage()}"
+                //                 }
+                //             }
+                //         }
+                //     }
+                // }
                 
-                stage('Cart Service') {
-                    when {
-                        expression {
-                            env.CART_PREVIOUS_VERSION == null || env.CART_PREVIOUS_VERSION == 'none' || env.CART_CHANGED == 'true'
-                        }
-                    }
-                    steps {
-                        dir('services/cart') {
-                            script {
-                                try {
-                                    def serviceCacheDir = "${NPM_CACHE_DIR}/cart"
-                                    sh "mkdir -p ${serviceCacheDir}"
-                                    sh "npm install --cache ${serviceCacheDir} --prefer-offline"
-                                    sh "npm test"
-                                    sh "docker build -t username/cart:${IMAGE_TAG} ."
-                                    sh "docker push username/cart:${IMAGE_TAG}"
+                // stage('Cart Service') {
+                //     when {
+                //         expression {
+                //             env.CART_PREVIOUS_VERSION == null || env.CART_PREVIOUS_VERSION == 'none' || env.CART_CHANGED == 'true'
+                //         }
+                //     }
+                //     steps {
+                //         dir('services/cart') {
+                //             script {
+                //                 try {
+                //                     def serviceCacheDir = "${NPM_CACHE_DIR}/cart"
+                //                     sh "mkdir -p ${serviceCacheDir}"
+                //                     sh "npm install --cache ${serviceCacheDir} --prefer-offline"
+                //                     sh "npm test"
+                //                     sh "docker build -t username/cart:${IMAGE_TAG} ."
+                //                     sh "docker push username/cart:${IMAGE_TAG}"
                                     
-                                    def previousVersion = sh(
-                                    script: "helm get values cart -o json | jq -r '.image.tag' 2>/dev/null || echo 'none'",
-                                    returnStdout: true
-                                    ).trim()
-                                    env.CART_PREVIOUS_VERSION = previousVersion
+                //                     def previousVersion = sh(
+                //                     script: "helm get values cart -o json | jq -r '.image.tag' 2>/dev/null || echo 'none'",
+                //                     returnStdout: true
+                //                     ).trim()
+                //                     env.CART_PREVIOUS_VERSION = previousVersion
                                     
-                                    sh "helm upgrade --install cart k8s/cart-helm --set image.tag=${IMAGE_TAG} --wait --timeout 300s"
-                                    sh "kubectl rollout status deployment/cart --timeout=120s"
-                                }catch (Exception e) {
-                                    currentBuild.result = 'FAILURE'
-                                    error "Cart Service deployment failed: ${e.getMessage()}"
-                                }
-                            }
-                        }
-                    }
-                }
+                //                     sh "helm upgrade --install cart k8s/cart-helm --set image.tag=${IMAGE_TAG} --wait --timeout 300s"
+                //                     sh "kubectl rollout status deployment/cart --timeout=120s"
+                //                 }catch (Exception e) {
+                //                     currentBuild.result = 'FAILURE'
+                //                     error "Cart Service deployment failed: ${e.getMessage()}"
+                //                 }
+                //             }
+                //         }
+                //     }
+                // }
             }
         }
         } // stages block ends
