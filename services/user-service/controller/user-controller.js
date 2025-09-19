@@ -65,7 +65,7 @@ const loginUser = asyncHandler(
         console.log(user);
         const isPasswordValid = await user.isPasswordCorrect(password)
         if (!isPasswordValid) {
-            throw new ApiError(401, "Invalid password")
+            throw new ApiError(401, "Invalid password you should add correct password")
         }
 
         const token = await user.generateToken()
