@@ -1,5 +1,5 @@
 user:
-  replicaCount: 2
+  replicaCount: 1
   selector: user-mongo
 
   image:
