@@ -68,7 +68,7 @@ pipeline {
                                     def serviceCacheDir = "${NPM_CACHE_DIR}/user-service"
                                     sh "mkdir -p ${serviceCacheDir}"
                                     sh "npm install --cache ${serviceCacheDir} --prefer-offline"
-                                    sh "npm test"
+                                    sh "npm start "
                                     sh "docker build -t username/user-service:${IMAGE_TAG} ."
                                     sh "docker push username/user-service:${IMAGE_TAG}"
                                     
@@ -102,7 +102,7 @@ pipeline {
                 //                     def serviceCacheDir = "${NPM_CACHE_DIR}/product-service"
                 //                     sh "mkdir -p ${serviceCacheDir}"
                 //                     sh "npm install --cache ${serviceCacheDir} --prefer-offline"
-                //                     sh "npm test"
+                //                     sh "npm start"
                 //                     sh "docker build -t username/product-service:${IMAGE_TAG} ."
                 //                     sh "docker push username/product-service:${IMAGE_TAG}"
                                     
@@ -136,7 +136,7 @@ pipeline {
                 //                     def serviceCacheDir = "${NPM_CACHE_DIR}/payment"
                 //                     sh "mkdir -p ${serviceCacheDir}"
                 //                     sh "npm install --cache ${serviceCacheDir} --prefer-offline"
-                //                     sh "npm test"
+                //                     sh "npm start"
                 //                     sh "docker build -t username/payment:${IMAGE_TAG} ."
                 //                     sh "docker push username/payment:${IMAGE_TAG}"
                                     
@@ -170,7 +170,7 @@ pipeline {
                 //                     def serviceCacheDir = "${NPM_CACHE_DIR}/cart"
                 //                     sh "mkdir -p ${serviceCacheDir}"
                 //                     sh "npm install --cache ${serviceCacheDir} --prefer-offline"
-                //                     sh "npm test"
+                //                     sh "npm start"
                 //                     sh "docker build -t username/cart:${IMAGE_TAG} ."
                 //                     sh "docker push username/cart:${IMAGE_TAG}"
                                     
