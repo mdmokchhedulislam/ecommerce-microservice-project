@@ -1,9 +1,9 @@
 pipeline {
     agent any
     tools {
-        nodejs 'nodejs23' 
+        nodejs 'nodejs23'
     }
-    
+
     environment {
         DOCKERHUB_CRED = credentials('dockerhub-id')
         IMAGE_TAG = "${env.GIT_COMMIT.take(7)}"
@@ -11,31 +11,31 @@ pipeline {
         EMAIL_RECIPIENTS = 'team@example.com'
         NPM_CACHE_DIR = "${env.WORKSPACE}/.npm-cache"
     }
-    
+
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
-        
+
         stage('Detect Changes') {
             steps {
                 script {
                     sh 'git fetch origin main'
-                    
+
                     def changedFiles = sh(
-                    script: "git diff --name-only origin/main",
-                    returnStdout: true
+                        script: "git diff --name-only origin/main",
+                        returnStdout: true
                     ).trim().split("\n")
-                    
+
                     echo "Changed files: ${changedFiles}"
-                    
+
                     env.USER_CHANGED = changedFiles.any { it.startsWith("services/user-service/") }.toString()
                     env.PRODUCT_CHANGED = changedFiles.any { it.startsWith("services/product-service/") }.toString()
                     env.PAYMENT_CHANGED = changedFiles.any { it.startsWith("services/payment/") }.toString()
                     env.CART_CHANGED = changedFiles.any { it.startsWith("services/cart/") }.toString()
-                    
+
                     env.CHANGED_SERVICES = []
                     if (env.USER_CHANGED == 'true') env.CHANGED_SERVICES.add('user-service')
                     if (env.PRODUCT_CHANGED == 'true') env.CHANGED_SERVICES.add('product-service')
@@ -44,7 +44,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Docker Login') {
             steps {
                 script {
@@ -52,42 +52,173 @@ pipeline {
                 }
             }
         }
-        
-        stage('Build & Deploy') {
-            parallel {
-                stage('User Service') {
-                    when {
-                        expression {
-                            env.USER_PREVIOUS_VERSION == null || env.USER_PREVIOUS_VERSION == 'none' || env.USER_CHANGED == 'true'
-                        }
-                    }
-                    steps {
-                        dir('services/user-service') {
-                            script {
-                                try {
-                                    def serviceCacheDir = "${NPM_CACHE_DIR}/user-service"
-                                    sh "mkdir -p ${serviceCacheDir}"
-                                    sh "npm install --cache ${serviceCacheDir} --prefer-offline"
-                                    sh "npm start "
-                                    sh "docker build -t username/user-service:${IMAGE_TAG} ."
-                                    sh "docker push username/user-service:${IMAGE_TAG}"
-                                    
-                                    def previousVersion = sh(
-                                    script: "helm get values user-service -o json | jq -r '.image.tag' 2>/dev/null || echo 'none'",
-                                    returnStdout: true
-                                    ).trim()
-                                    env.USER_PREVIOUS_VERSION = previousVersion
-                                    
-                                    sh "helm upgrade --install user-service k8s/user-helm --set image.tag=${IMAGE_TAG} --wait --timeout 300s"
-                                    sh "kubectl rollout status deployment/user-service --timeout=120s"
-                                }catch (Exception e) {
-                                    currentBuild.result = 'FAILURE'
-                                    error "User Service deployment failed: ${e.getMessage()}"
-                                }
-                            }
+
+        stage('Build & Deploy User Service') {
+            when {
+                expression {
+                    env.USER_PREVIOUS_VERSION == null || env.USER_PREVIOUS_VERSION == 'none' || env.USER_CHANGED == 'true'
+                }
+            }
+            steps {
+                dir('services/user-service') {
+                    script {
+                        try {
+                            def serviceCacheDir = "${NPM_CACHE_DIR}/user-service"
+                            sh "mkdir -p ${serviceCacheDir}"
+                            sh "npm install --cache ${serviceCacheDir} --prefer-offline"
+
+                            // Nodemon permission issue এড়াতে direct node ব্যবহার
+                            sh "node index.js &" // background এ run করলে pipeline hang হবে না
+
+                            sh "docker build -t username/user-service:${IMAGE_TAG} ."
+                            sh "docker push username/user-service:${IMAGE_TAG}"
+
+                            def previousVersion = sh(
+                                script: "helm get values user-service -o json | jq -r '.image.tag' 2>/dev/null || echo 'none'",
+                                returnStdout: true
+                            ).trim()
+                            env.USER_PREVIOUS_VERSION = previousVersion
+
+                            sh "helm upgrade --install user-service k8s/user-helm --set image.tag=${IMAGE_TAG} --wait --timeout 300s"
+                            sh "kubectl rollout status deployment/user-service --timeout=120s"
+                        } catch (Exception e) {
+                            currentBuild.result = 'FAILURE'
+                            error "User Service deployment failed: ${e.getMessage()}"
                         }
                     }
                 }
+            }
+        }
+
+        // অন্য services pipeline এ পরে parallel ভাবে run করা যাবে
+        // stage('Build & Deploy Other Services') { ... }
+    }
+
+    post {
+        always {
+            script {
+                sh "find ${NPM_CACHE_DIR} -type f -name '*.tgz' -mtime +7 -delete || true"
+                // notifications...
+            }
+        }
+        success { echo "Pipeline finished successfully." }
+        failure {
+            script {
+                echo "Pipeline failed. Attempting rollback..."
+                // rollback logic
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// pipeline {
+//     agent any
+//     tools {
+//         nodejs 'nodejs23' 
+//     }
+    
+//     environment {
+//         DOCKERHUB_CRED = credentials('dockerhub-id')
+//         IMAGE_TAG = "${env.GIT_COMMIT.take(7)}"
+//         SLACK_CHANNEL = '#deployments'
+//         EMAIL_RECIPIENTS = 'team@example.com'
+//         NPM_CACHE_DIR = "${env.WORKSPACE}/.npm-cache"
+//     }
+    
+//     stages {
+//         stage('Checkout') {
+//             steps {
+//                 checkout scm
+//             }
+//         }
+        
+//         stage('Detect Changes') {
+//             steps {
+//                 script {
+//                     sh 'git fetch origin main'
+                    
+//                     def changedFiles = sh(
+//                     script: "git diff --name-only origin/main",
+//                     returnStdout: true
+//                     ).trim().split("\n")
+                    
+//                     echo "Changed files: ${changedFiles}"
+                    
+//                     env.USER_CHANGED = changedFiles.any { it.startsWith("services/user-service/") }.toString()
+//                     env.PRODUCT_CHANGED = changedFiles.any { it.startsWith("services/product-service/") }.toString()
+//                     env.PAYMENT_CHANGED = changedFiles.any { it.startsWith("services/payment/") }.toString()
+//                     env.CART_CHANGED = changedFiles.any { it.startsWith("services/cart/") }.toString()
+                    
+//                     env.CHANGED_SERVICES = []
+//                     if (env.USER_CHANGED == 'true') env.CHANGED_SERVICES.add('user-service')
+//                     if (env.PRODUCT_CHANGED == 'true') env.CHANGED_SERVICES.add('product-service')
+//                     if (env.PAYMENT_CHANGED == 'true') env.CHANGED_SERVICES.add('payment')
+//                     if (env.CART_CHANGED == 'true') env.CHANGED_SERVICES.add('cart')
+//                 }
+//             }
+//         }
+        
+//         stage('Docker Login') {
+//             steps {
+//                 script {
+//                     sh "echo ${DOCKERHUB_CRED_PSW} | docker login -u ${DOCKERHUB_CRED_USR} --password-stdin"
+//                 }
+//             }
+//         }
+        
+//         stage('Build & Deploy') {
+//             parallel {
+//                 stage('User Service') {
+//                     when {
+//                         expression {
+//                             env.USER_PREVIOUS_VERSION == null || env.USER_PREVIOUS_VERSION == 'none' || env.USER_CHANGED == 'true'
+//                         }
+//                     }
+//                     steps {
+//                         dir('services/user-service') {
+//                             script {
+//                                 try {
+//                                     def serviceCacheDir = "${NPM_CACHE_DIR}/user-service"
+//                                     sh "mkdir -p ${serviceCacheDir}"
+//                                     sh "npm install --cache ${serviceCacheDir} --prefer-offline"
+//                                     sh "npm start "
+//                                     sh "docker build -t username/user-service:${IMAGE_TAG} ."
+//                                     sh "docker push username/user-service:${IMAGE_TAG}"
+                                    
+//                                     def previousVersion = sh(
+//                                     script: "helm get values user-service -o json | jq -r '.image.tag' 2>/dev/null || echo 'none'",
+//                                     returnStdout: true
+//                                     ).trim()
+//                                     env.USER_PREVIOUS_VERSION = previousVersion
+                                    
+//                                     sh "helm upgrade --install user-service k8s/user-helm --set image.tag=${IMAGE_TAG} --wait --timeout 300s"
+//                                     sh "kubectl rollout status deployment/user-service --timeout=120s"
+//                                 }catch (Exception e) {
+//                                     currentBuild.result = 'FAILURE'
+//                                     error "User Service deployment failed: ${e.getMessage()}"
+//                                 }
+//                             }
+//                         }
+//                     }
+//                 }
                 
                 // stage('Product Service') {
                 //     when {
