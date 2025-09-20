@@ -1,16 +1,16 @@
 user:
-  replicaCount: 2
+  replicaCount: 1
   selector: user-mongo
 
   image:
     repository: mokchhedul/user-service
-    tag: a237aa3
+    tag: 32579f5
 
     pullPolicy: IfNotPresent
 
   service:
     name: user-service
-    type: ClusterIP
+    type: LoadBalancer
     port: 3000
 
 config:
