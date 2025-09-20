@@ -96,6 +96,28 @@ const loginUser = asyncHandler(
     }
 )
 
+const verifyTokenFromCookie = async (req, res) => {
+  try {
+
+    // console.log("verify running");
+    
+    const token = req.cookies?.token || req.headers["authorization"]?.replace("Bearer ", "");
+
+      console.log("verify token is", token);
+      
+    if (!token) {
+      throw new ApiError(401, "Unauthorized request");
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (!decoded?._id) throw new ApiError(401, "Invalid token");
+
+    const user = await User.findById(decoded._id).select("-password");
+    if (!user) throw new ApiError(401, "User not found");
+    res.status(200).json({ valid: true, user });
+  } catch (err) {
+    res.status(401).json({ valid: false, message: err.message || "Invalid or expired token" });
+  }
+};  
 
 const logOut = asyncHandler(
     async (req, res) => {
@@ -187,24 +209,7 @@ const updateUserRole = asyncHandler(async (req, res) => {
 
 // =================== Verify Token from Header ===================
 
-const verifyTokenFromCookie = async (req, res) => {
-  try {
-    const token =
-      req.cookies?.token || req.headers["authorization"]?.replace("Bearer ", "");
 
-    if (!token) {
-      throw new ApiError(401, "Unauthorized request");
-    }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (!decoded?._id) throw new ApiError(401, "Invalid token");
-
-    const user = await User.findById(decoded._id).select("-password");
-    if (!user) throw new ApiError(401, "User not found");
-    res.status(200).json({ valid: true, user });
-  } catch (err) {
-    res.status(401).json({ valid: false, message: err.message || "Invalid or expired token" });
-  }
-};
 
 export {
   registerUser,

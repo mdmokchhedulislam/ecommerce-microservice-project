@@ -2,27 +2,17 @@ import axios from "axios";
 
 const authMiddleware = async (req, res, next) => {
   try {
-    // Read token from cookie
-    const token = req.cookies?.token;
-
-    console.log("Token from cookie:", token);
-
-    if (!token) {
-      return res.status(403).json({ message: "No token provided" });
-    }
-
-    // Send token to auth service for verification (GET request)
-    const response = await axios.get(
-      "http://localhost:3000/api/auth/verify",
-      {
-        headers: { Authorization: `Bearer ${token}` }
-      }
-    );
+    // Forward cookie from incoming request to auth service
+    const response = await axios.get("http://localhost:3000/api/auth/verify", {
+      headers: {
+        Cookie: req.headers.cookie || "", // browser থেকে cookie forward করা
+      },
+    });
 
     console.log("Auth service response:", response.data);
 
     if (response.data.valid) {
-      req.user = response.data.user; // attach user info to request
+      req.user = response.data.user; // attach user info
       return next();
     } else {
       return res.status(401).json({ message: "Unauthorized" });

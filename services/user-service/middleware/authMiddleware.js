@@ -5,12 +5,24 @@ dotenv.config();
 
 export const isAuthenticate = (req, res, next) => {
   try {
-    const token = req.cookies?.token;
+    // console.log("auth is running");
+    
+    let token=req.headers?.token
+    if(!token){
+        token=req.cookies?.token
+    }
+  // console.log("token is", token);
+  
     if (!token) {
       throw new ApiError(401, "Unauthorized: Token not found need to authorized");
     }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_ACCESS);
-    req.user = decoded;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // console.log('decoded form auth', decoded);
+    
+    let email = decoded?.email;
+    let user_id = decoded?._id;
+    req.headers.email=email;
+    req.headers.user_id=user_id
     next();
   } catch (err) {
     if (err.name === "TokenExpiredError") {
