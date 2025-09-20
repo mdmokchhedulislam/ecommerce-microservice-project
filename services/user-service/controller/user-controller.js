@@ -69,7 +69,7 @@ const loginUser = asyncHandler(
         }
 
         const token = await user.generateToken()
-        const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
+        const loggedInUser = await User.findById(user._id).select("-password")
 
         if (!loggedInUser) {
             throw new ApiError(500, "something went wrong ")
@@ -190,7 +190,7 @@ const updateUserRole = asyncHandler(async (req, res) => {
 const verifyTokenFromCookie = async (req, res) => {
   try {
     const token =
-      req.cookies?.accessToken || req.headers["authorization"]?.replace("Bearer ", "");
+      req.cookies?.token || req.headers["authorization"]?.replace("Bearer ", "");
 
     if (!token) {
       throw new ApiError(401, "Unauthorized request");
