@@ -10,7 +10,7 @@ user:
 
   service:
     name: user-service
-    type: LoadBalancer
+    type: ClusterIP
     port: 3000
 
 config:
