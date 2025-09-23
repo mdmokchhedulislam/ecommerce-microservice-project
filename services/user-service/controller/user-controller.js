@@ -47,64 +47,64 @@ const registerUser = asyncHandler(async (req, res) => {
 
 // =================== Login User ===================
 
-const loginUser = asyncHandler(
-    async (req, res) => {
+const loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  console.log(email, password);
 
-        const { email, password } = req.body
-        console.log(email, password);
+  if (!email || !password) {
+    throw new ApiError(400, "email and password  are required");
+  }
+  const user = await User.findOne({ email });
 
-        if (!email || !password) {
-            throw new ApiError(400, "email and password  are required")
-        }
-        const user = await User.findOne({ email })
+  if (!user) {
+    throw new ApiError(404, "user is not found in this server");
+  }
 
-        if (!user) {
-            throw new ApiError(404, "user is not found in this server")
-        }
+  console.log(user);
+  const isPasswordValid = await user.isPasswordCorrect(password);
+  if (!isPasswordValid) {
+    throw new ApiError(401, "Invalid password");
+  }
 
-        console.log(user);
-        const isPasswordValid = await user.isPasswordCorrect(password)
-        if (!isPasswordValid) {
-            throw new ApiError(401, "Invalid password")
-        }
+  const token = await user.generateToken();
+  const loggedInUser = await User.findById(user._id).select("-password");
 
-        const token = await user.generateToken()
-        const loggedInUser = await User.findById(user._id).select("-password")
+  if (!loggedInUser) {
+    throw new ApiError(500, "something went wrong ");
+  }
 
-        if (!loggedInUser) {
-            throw new ApiError(500, "something went wrong ")
-        }
+  const options = {
+    httpOnly: true, 
+    secure: false, 
+    sameSite: "lax", 
+    maxAge: 24 * 60 * 60 * 1000,
+  };
 
-        const options = {
-            httpOnly: false,
-            secure: true,
-            sameSite: 'Lax',
-            maxAge: 24 * 60 * 60 * 1000,
-        }
-        return res
-            .status(200)
-            .cookie("token", token, options)
-            .json(
-                new ApiResponse(200, {
-                    user: loggedInUser,
-                    token
-                },
-                    "user logged in successfully"
-                ),
-
-            )
-    }
-)
+  return res
+    .status(200)
+    .cookie("token", token, options)
+    .json(
+      new ApiResponse(
+        200,
+        {
+          user: loggedInUser,
+          token,
+        },
+        "user logged in successfully"
+      )
+    );
+});
 
 const verifyTokenFromCookie = async (req, res) => {
   try {
-
     // console.log("verify running");
-    
-    const token = req.cookies?.token || req.headers["authorization"]?.replace("Bearer ", "");
 
-      console.log("verify token is", token);
-      
+    const token =
+      req.cookies?.token ||
+      req.headers["authorization"]?.replace("Bearer ", "");
+
+    console.log("verify token is", token);
+
     if (!token) {
       throw new ApiError(401, "Unauthorized request");
     }
@@ -115,22 +115,20 @@ const verifyTokenFromCookie = async (req, res) => {
     if (!user) throw new ApiError(401, "User not found");
     res.status(200).json({ valid: true, user });
   } catch (err) {
-    res.status(401).json({ valid: false, message: err.message || "Invalid or expired token" });
+    res
+      .status(401)
+      .json({
+        valid: false,
+        message: err.message || "Invalid or expired token",
+      });
   }
-};  
+};
 
-const logOut = asyncHandler(
-    async (req, res) => {
-        res.cookie("token", "").status(200).json({
-            message: "user logout successfully"
-        })
-    }
-)
-
-
-
-
-
+const logOut = asyncHandler(async (req, res) => {
+  res.cookie("token", "").status(200).json({
+    message: "user logout successfully",
+  });
+});
 
 // =================== Find Profile ===================
 const findProfile = asyncHandler(async (req, res) => {
@@ -138,9 +136,10 @@ const findProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(user_id).select("-password");
   if (!user) throw new ApiError(404, "User not found");
 
-  return res.status(200).json(new ApiResponse(200, user, "User profile fetched successfully"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "User profile fetched successfully"));
 });
-
 
 // =================== Change Current Password ===================
 const changeCurrentPassword = asyncHandler(async (req, res) => {
@@ -196,7 +195,8 @@ const updateUserRole = asyncHandler(async (req, res) => {
   const { role } = req.body;
 
   if (!role) throw new ApiError(400, "Role is required");
-  if (!["user", "seller"].includes(role)) throw new ApiError(400, "Invalid role specified");
+  if (!["user", "seller"].includes(role))
+    throw new ApiError(400, "Invalid role specified");
 
   const user = await User.findById(_id);
   if (!user) throw new ApiError(404, "User not found");
@@ -204,12 +204,12 @@ const updateUserRole = asyncHandler(async (req, res) => {
   user.role = role;
   await user.save();
 
-  return res.status(200).json(new ApiResponse(200, user, "Role updated successfully"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Role updated successfully"));
 });
 
 // =================== Verify Token from Header ===================
-
-
 
 export {
   registerUser,
@@ -220,5 +220,5 @@ export {
   updateAccountDetails,
   updateUserRole,
   findProfile,
-  verifyTokenFromCookie
+  verifyTokenFromCookie,
 };
