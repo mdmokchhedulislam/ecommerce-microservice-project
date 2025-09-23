@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs"; // bcryptjs ব্যবহার করলে compatibility ভালো
+import bcrypt from "bcryptjs"; 
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -69,8 +69,8 @@ userSchema.methods.generateToken =function(){
             name:this.name,
         },
         //token secret
-        mokchhedul
-        // process.env.JWT_SECRET
+        // "mokchhedul"
+        process.env.JWT_SECRET
         
         ,
         {

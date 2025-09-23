@@ -1,38 +1,26 @@
 import jwt from "jsonwebtoken";
-import { ApiError } from "../utils/apiError.js";
-import dotenv from "dotenv";
-dotenv.config();
 
 export const isAuthenticate = (req, res, next) => {
   try {
-    // console.log("auth is running");
-    console.log("token is", req.cookies?.token);
+    const authHeader = req.headers["authorization"];
+    console.log("authheader", authHeader);
     
-    
-    let token=req.headers?.token
-    if(!token){
-        token=req.cookies?.token
+    if (!authHeader) {
+      console.log(" Authorization header not found");
+      return res.status(401).json({ message: "Unauthorized: Token missing" });
     }
-  // console.log("token is", token);
-  
+    const token = authHeader.split(" ")[1];
     if (!token) {
-      throw new ApiError(401, "Unauthorized: Token not found need to authorized");
+      console.log(" Token not found in header");
+      return res.status(401).json({ message: "Unauthorized: Token missing" });
     }
-    const decoded = jwt.verify(token, mokchhedul);
-    // console.log('decoded form auth', decoded);
-    
-    let email = decoded?.email;
-    let user_id = decoded?._id;
-    req.headers.email=email;
-    req.headers.user_id=user_id
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("✅ Decoded user:", decoded);
+    req.user = decoded;
+
     next();
   } catch (err) {
-    if (err.name === "TokenExpiredError") {
-      return res.status(401).json({ success: false, message: "Access token expired" });
-    }
-    if (err.name === "JsonWebTokenError") {
-      return res.status(401).json({ success: false, message: "Invalid token" });
-    }
-    return res.status(401).json({ success: false, message: err.message || "Unauthorized" });
+    console.log(" Token verification failed:", err.message);
+    return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
