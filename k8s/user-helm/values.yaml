@@ -16,6 +16,7 @@ user:
 config:
   mongoUri: "mongodb://user-mongo-service:27017/data"
   port: "3000"
+  gpn: "mokchhedul"
 
 db:
   replicaCount: 1

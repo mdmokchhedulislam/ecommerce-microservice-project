@@ -6,6 +6,8 @@ dotenv.config();
 export const isAuthenticate = (req, res, next) => {
   try {
     // console.log("auth is running");
+    console.log("token is", req.cookies?.token);
+    
     
     let token=req.headers?.token
     if(!token){
@@ -16,7 +18,7 @@ export const isAuthenticate = (req, res, next) => {
     if (!token) {
       throw new ApiError(401, "Unauthorized: Token not found need to authorized");
     }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, mokchhedul);
     // console.log('decoded form auth', decoded);
     
     let email = decoded?.email;

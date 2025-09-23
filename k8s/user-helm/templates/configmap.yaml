@@ -5,3 +5,4 @@ metadata:
 data:
   MONGO_URI: {{ .Values.config.mongoUri | quote }}
   PORT: {{ .Values.config.port | quote }}
+

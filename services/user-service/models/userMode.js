@@ -69,7 +69,8 @@ userSchema.methods.generateToken =function(){
             name:this.name,
         },
         //token secret
-        process.env.JWT_SECRET
+        mokchhedul
+        // process.env.JWT_SECRET
         
         ,
         {
